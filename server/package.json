@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
+    "prestart": "node ensure-client-build.js",
     "start": "node index.js"
   },
   "dependencies": {
