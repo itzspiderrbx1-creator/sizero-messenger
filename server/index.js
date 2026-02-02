@@ -120,13 +120,21 @@ app.get("/api/me", authMiddleware, async (req, res) => {
   res.json({ user });
 });
 
-// ---------- SERVE FRONTEND (PRODUCTION) ----------
+// ---------------- SERVE FRONTEND (production) ----------------
 if (process.env.NODE_ENV === "production") {
   const distPath = path.join(__dirname, "../client/dist");
+
+  // маленький дебаг в логах Render
+  console.log("[frontend] distPath =", distPath, "exists =", fs.existsSync(distPath));
+
   app.use(express.static(distPath));
 
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(distPath, "index.html"));
+  // SPA fallback: отдаём index.html на все НЕ-API запросы
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api") || req.path.startsWith("/uploads") || req.path.startsWith("/socket.io")) {
+      return next();
+    }
+    return res.sendFile(path.join(distPath, "index.html"));
   });
 }
 
