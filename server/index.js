@@ -1,4 +1,4 @@
-import express from "express";
+﻿import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
@@ -24,7 +24,7 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
 // ---------- APP ----------
 const app = express();
 
-// CORS (работает с credentials + Render)
+// CORS (СЂР°Р±РѕС‚Р°РµС‚ СЃ credentials + Render)
 const allowlist = CORS_ORIGIN.split(",").map(s => s.trim()).filter(Boolean);
 app.use(
   cors({
@@ -124,12 +124,12 @@ app.get("/api/me", authMiddleware, async (req, res) => {
 if (process.env.NODE_ENV === "production") {
   const distPath = path.join(__dirname, "../client/dist");
 
-  // маленький дебаг в логах Render
+  // РјР°Р»РµРЅСЊРєРёР№ РґРµР±Р°Рі РІ Р»РѕРіР°С… Render
   console.log("[frontend] distPath =", distPath, "exists =", fs.existsSync(distPath));
 
   app.use(express.static(distPath));
 
-  // SPA fallback: отдаём index.html на все НЕ-API запросы
+  // SPA fallback: РѕС‚РґР°С‘Рј index.html РЅР° РІСЃРµ РќР•-API Р·Р°РїСЂРѕСЃС‹
   app.get("*", (req, res, next) => {
     if (req.path.startsWith("/api") || req.path.startsWith("/uploads") || req.path.startsWith("/socket.io")) {
       return next();
@@ -139,6 +139,27 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // ---------- SOCKET.IO ----------
+// ---------------- SERVE FRONTEND (production, Render-safe) ----------------
+if (process.env.NODE_ENV === "production") {
+  // Render запускает процесс из корня проекта
+  const distPath = path.join(process.cwd(), "client", "dist");
+
+  console.log("[frontend] distPath =", distPath, "exists =", fs.existsSync(distPath));
+
+  app.use(express.static(distPath));
+
+  // SPA fallback: все НЕ-API запросы -> index.html
+  app.get("*", (req, res, next) => {
+    if (
+      req.path.startsWith("/api") ||
+      req.path.startsWith("/uploads") ||
+      req.path.startsWith("/socket.io")
+    ) {
+      return next();
+    }
+    return res.sendFile(path.join(distPath, "index.html"));
+  });
+}
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -188,3 +209,4 @@ io.on("connection", async (socket) => {
 server.listen(PORT, () => {
   console.log(`[Sizero] Server running on port ${PORT}`);
 });
+
