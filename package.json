@@ -1,0 +1,16 @@
+{
+  "name": "sizero-messenger",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "npm --prefix server run dev & npm --prefix client run dev",
+    "start": "npm --prefix server run start",
+    "desktop:dev": "npm --prefix desktop install && npm --prefix desktop run dev",
+    "desktop:build:win": "npm --prefix desktop install && npm --prefix desktop run build:win",
+    "desktop:build:linux": "npm --prefix desktop install && npm --prefix desktop run build:linux",
+    "desktop:build:mac": "npm --prefix desktop install && npm --prefix desktop run build:mac"
+  }
+}

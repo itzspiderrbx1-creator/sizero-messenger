@@ -1,0 +1,42 @@
+{
+  "name": "sizero-desktop",
+  "private": true,
+  "main": "main.cjs",
+  "version": "0.1.0",
+  "description": "Sizero Messenger desktop wrapper",
+  "scripts": {
+    "dev": "node dev.cjs",
+    "build:win": "node prepare.cjs && electron-builder --win --x64",
+    "build:linux": "node prepare.cjs && electron-builder --linux",
+    "build:mac": "node prepare.cjs && electron-builder --mac"
+  },
+  "dependencies": {
+    "electron": "^31.6.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.13.3",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.sizero.messenger",
+    "productName": "Sizero Messenger",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "app/**/*",
+      "assets/**/*"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    }
+  }
+}
